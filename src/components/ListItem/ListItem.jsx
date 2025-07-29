@@ -1,10 +1,12 @@
+import {connect} from 'react-redux';
+import {setCurrentContact} from '../../store/actions/currentContactActions';
 import './ListItem.css';
 
-function ListItem({selected, contact, enterEditMode, deleteContact}) {
+function ListItem({selected, contact, setCurrentContact, deleteContact}) {
     return (
         <li
             className={selected ? 'active' : ''}
-            onDoubleClick={() => enterEditMode(contact.id)}
+            onDoubleClick={() => setCurrentContact(contact)}
         >
             {`${contact.firstName} ${contact.lastName}`}
             <button
@@ -20,4 +22,8 @@ function ListItem({selected, contact, enterEditMode, deleteContact}) {
     );
 }
 
-export default ListItem;
+const mapDispatchToProps = {
+    setCurrentContact,
+};
+
+export default connect(null, mapDispatchToProps)(ListItem);

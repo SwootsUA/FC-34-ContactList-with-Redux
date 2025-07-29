@@ -1,12 +1,21 @@
 import {useState, useEffect} from 'react';
-import PropTypes from 'prop-types';
+import {connect} from 'react-redux';
+import {nanoid} from 'nanoid';
 import './ContactForm.css';
+import api from '../../api/contacts-service';
+import {
+    addContact,
+    deleteContact,
+    editContact,
+} from '../../store/actions/contactActions';
+import {resetCurrentContact} from '../../store/actions/currentContactActions';
 
 function ContactForm({
     currentContact,
-    EMPTY_CONTACT,
-    saveContact,
     deleteContact,
+    resetCurrentContact,
+    addContact,
+    editContact,
 }) {
     const [currentFormContact, setCurrentFormContact] = useState({
         ...currentContact,
@@ -34,17 +43,34 @@ function ContactForm({
         });
     }
 
-    function clearContact() {
-        setCurrentFormContact({...EMPTY_CONTACT});
-    }
-
     function onFormSubmit(e) {
         e.preventDefault();
-        saveContact(currentFormContact);
-
-        if (!currentFormContact.id) {
-            clearContact();
+        const submitContact = {...currentFormContact};
+        if (submitContact.id) {
+            api.put(`/contacts/${submitContact.id}`, submitContact)
+                .then(({data}) => {
+                    editContact(data);
+                })
+                .catch(error => {
+                    console.error(error);
+                });
+        } else {
+            submitContact.id = nanoid();
+            api.post('/contacts', submitContact)
+                .then(({data}) => {
+                    addContact(data);
+                })
+                .catch(error => console.error(error));
+            resetCurrentContact();
         }
+    }
+
+    function deleteCurrentContact() {
+        api.delete(`/contacts/${currentFormContact.id}`)
+            .then(() => {
+                deleteContact(currentFormContact.id);
+            })
+            .catch(error => console.error(error));
     }
 
     return (
@@ -118,18 +144,15 @@ function ContactForm({
                     </button>
                 </div>
             </div>
-
             <div className="btn-container form-submit">
                 <button type="submit">Save</button>
             </div>
-
             {currentContact.id && (
                 <div className="btn-container form-delete">
                     <button
                         type="button"
-                        // to make sure arguments are empty and event aren't passed through
                         onClick={() => {
-                            deleteContact();
+                            deleteCurrentContact();
                         }}
                     >
                         Delete
@@ -140,8 +163,13 @@ function ContactForm({
     );
 }
 
-ContactForm.propTypes = {
-    saveContact: PropTypes.func.isRequired,
+const mapStateToProps = ({currentContact}) => ({currentContact});
+
+const mapDispatchToProps = {
+    deleteContact,
+    resetCurrentContact,
+    addContact,
+    editContact,
 };
 
-export default ContactForm;
+export default connect(mapStateToProps, mapDispatchToProps)(ContactForm);

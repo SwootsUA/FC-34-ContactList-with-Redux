@@ -1,18 +1,32 @@
-import PropTypes from 'prop-types';
+import {useEffect} from 'react';
+import {connect} from 'react-redux';
 import ListItem from '../ListItem/ListItem';
+import {deleteContact, getContacts} from '../../store/actions/contactActions';
+import api from '../../api/contacts-service';
 import './ContactList.css';
 
-function ContactList({selectedId, contacts, enterEditMode, deleteContact}) {
+function ContactList({contacts, getContacts, currentContact, deleteContact}) {
+    useEffect(() => {
+        api.get('/contacts').then(({data}) => getContacts(data));
+    }, [getContacts]);
+
+    function deleteListContact(id) {
+        api.delete(`/contacts/${id}`)
+            .then(() => {
+                deleteContact(id);
+            })
+            .catch(error => console.error(error));
+    }
+
     return (
         <div className="scroll-box">
             <ul>
                 {contacts.map(contact => (
                     <ListItem
-                        selected={selectedId === contact.id}
+                        selected={currentContact.id === contact.id}
                         contact={contact}
-                        enterEditMode={enterEditMode}
                         key={contact.id}
-                        deleteContact={deleteContact}
+                        deleteContact={() => deleteListContact(contact.id)}
                     />
                 ))}
             </ul>
@@ -20,12 +34,14 @@ function ContactList({selectedId, contacts, enterEditMode, deleteContact}) {
     );
 }
 
-ContactList.defaultProps = {
-    contacts: [],
+const mapStateToProps = ({contacts, currentContact}) => ({
+    contacts,
+    currentContact,
+});
+
+const mapDispatchToProps = {
+    getContacts,
+    deleteContact,
 };
 
-ContactList.propTypes = {
-    contacts: PropTypes.array,
-};
-
-export default ContactList;
+export default connect(mapStateToProps, mapDispatchToProps)(ContactList);
