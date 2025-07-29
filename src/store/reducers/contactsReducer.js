@@ -1,35 +1,20 @@
 import {contactsState} from '../../model/initialContacts';
 
-const initialState = {
-    contacts: contactsState,
-};
-
-export default function reducer(state = initialState, {type, payload}) {
+export default function contactsReducer(
+    state = contactsState,
+    {type, payload}
+) {
     switch (type) {
         case 'addContact':
-            return {
-                ...state,
-                contacts: [...state.contacts, payload],
-            };
+            return [...state, payload];
         case 'editContact':
-            return {
-                ...state,
-                contacts: state.contacts.map(contact =>
-                    contact.id === payload.id ? payload : contact
-                ),
-            };
+            return state.map(contact =>
+                contact.id === payload.id ? payload : contact
+            );
         case 'deleteContact':
-            return {
-                ...state,
-                contacts: state.contacts.filter(
-                    contact => contact.id !== payload
-                ),
-            };
+            return state.filter(contact => contact.id !== payload);
         case 'getContacts':
-            return {
-                ...state,
-                contacts: [...payload],
-            };
+            return [...payload];
         default:
             return state;
     }
