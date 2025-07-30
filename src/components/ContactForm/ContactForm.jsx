@@ -1,7 +1,6 @@
 import {useState, useEffect} from 'react';
-import {connect} from 'react-redux';
+import {useSelector, useDispatch} from 'react-redux';
 import {nanoid} from 'nanoid';
-import './ContactForm.css';
 import api from '../../api/contacts-service';
 import {
     addContact,
@@ -9,14 +8,12 @@ import {
     editContact,
 } from '../../store/actions/contactActions';
 import {resetCurrentContact} from '../../store/actions/currentContactActions';
+import './ContactForm.css';
 
-function ContactForm({
-    currentContact,
-    deleteContact,
-    resetCurrentContact,
-    addContact,
-    editContact,
-}) {
+function ContactForm() {
+    const dispatch = useDispatch();
+    const currentContact = useSelector(state => state.currentContact);
+
     const [currentFormContact, setCurrentFormContact] = useState({
         ...currentContact,
     });
@@ -49,7 +46,7 @@ function ContactForm({
         if (submitContact.id) {
             api.put(`/contacts/${submitContact.id}`, submitContact)
                 .then(({data}) => {
-                    editContact(data);
+                    dispatch(editContact(data));
                 })
                 .catch(error => {
                     console.error(error);
@@ -58,17 +55,17 @@ function ContactForm({
             submitContact.id = nanoid();
             api.post('/contacts', submitContact)
                 .then(({data}) => {
-                    addContact(data);
+                    dispatch(addContact(data));
                 })
                 .catch(error => console.error(error));
-            resetCurrentContact();
+            dispatch(resetCurrentContact());
         }
     }
 
     function deleteCurrentContact() {
         api.delete(`/contacts/${currentFormContact.id}`)
             .then(() => {
-                deleteContact(currentFormContact.id);
+                dispatch(deleteContact(currentFormContact.id));
             })
             .catch(error => console.error(error));
     }
@@ -163,13 +160,4 @@ function ContactForm({
     );
 }
 
-const mapStateToProps = ({currentContact}) => ({currentContact});
-
-const mapDispatchToProps = {
-    deleteContact,
-    resetCurrentContact,
-    addContact,
-    editContact,
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(ContactForm);
+export default ContactForm;

@@ -1,10 +1,12 @@
-import {connect} from 'react-redux';
+import {useDispatch} from 'react-redux';
 import ContactList from './components/ContactList/ContactList';
 import ContactForm from './components/ContactForm/ContactForm';
-import './App.css';
 import {resetCurrentContact} from './store/actions/currentContactActions';
+import './App.css';
 
-function App({resetCurrentContact}) {
+function App() {
+    const dispatch = useDispatch();
+
     return (
         <>
             <header>
@@ -15,14 +17,12 @@ function App({resetCurrentContact}) {
             <ContactForm />
 
             <div className="btn-container">
-                <button onClick={resetCurrentContact}>New</button>
+                <button onClick={() => dispatch(resetCurrentContact())}>
+                    New
+                </button>
             </div>
         </>
     );
 }
 
-const mapDispatchToProps = {
-    resetCurrentContact,
-};
-
-export default connect(null, mapDispatchToProps)(App);
+export default App;

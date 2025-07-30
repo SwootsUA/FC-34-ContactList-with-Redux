@@ -1,19 +1,23 @@
 import {useEffect} from 'react';
-import {connect} from 'react-redux';
+import {useSelector, useDispatch} from 'react-redux';
 import ListItem from '../ListItem/ListItem';
 import {deleteContact, getContacts} from '../../store/actions/contactActions';
 import api from '../../api/contacts-service';
 import './ContactList.css';
 
-function ContactList({contacts, getContacts, currentContact, deleteContact}) {
+function ContactList() {
+    const dispatch = useDispatch();
+    const contacts = useSelector(state => state.contacts);
+    const currentContact = useSelector(state => state.currentContact);
+
     useEffect(() => {
-        api.get('/contacts').then(({data}) => getContacts(data));
-    }, [getContacts]);
+        api.get('/contacts').then(({data}) => dispatch(getContacts(data)));
+    }, [dispatch]);
 
     function deleteListContact(id) {
         api.delete(`/contacts/${id}`)
             .then(() => {
-                deleteContact(id);
+                dispatch(deleteContact(id));
             })
             .catch(error => console.error(error));
     }
@@ -34,14 +38,4 @@ function ContactList({contacts, getContacts, currentContact, deleteContact}) {
     );
 }
 
-const mapStateToProps = ({contacts, currentContact}) => ({
-    contacts,
-    currentContact,
-});
-
-const mapDispatchToProps = {
-    getContacts,
-    deleteContact,
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(ContactList);
+export default ContactList;
