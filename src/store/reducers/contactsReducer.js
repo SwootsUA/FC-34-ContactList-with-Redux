@@ -1,19 +1,20 @@
-import {contactsState} from '../../model/initialContacts';
+import {contactsState} from '../../model/initialStates';
+import ACTION_TYPES from '../actions/actionTypes';
 
 export default function contactsReducer(
     state = contactsState,
     {type, payload}
 ) {
     switch (type) {
-        case 'addContact':
+        case ACTION_TYPES.ADD_CONTACT:
             return [...state, payload];
-        case 'editContact':
+        case ACTION_TYPES.EDIT_CONTACT:
             return state.map(contact =>
                 contact.id === payload.id ? payload : contact
             );
-        case 'deleteContact':
+        case ACTION_TYPES.DELETE_CONTACT:
             return state.filter(contact => contact.id !== payload);
-        case 'getContacts':
+        case ACTION_TYPES.GET_CONTACTS:
             return [...payload];
         default:
             return state;

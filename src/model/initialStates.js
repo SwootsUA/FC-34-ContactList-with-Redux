@@ -7,3 +7,11 @@ export const contactsState = [
         phone: '',
     },
 ];
+
+export const currentContactState = {
+    id: '',
+    firstName: '',
+    lastName: '',
+    email: '',
+    phone: '',
+};
