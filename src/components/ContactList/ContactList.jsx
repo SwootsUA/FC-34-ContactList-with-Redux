@@ -30,7 +30,7 @@ function ContactList() {
                         selected={currentContact.id === contact.id}
                         contact={contact}
                         key={contact.id}
-                        deleteContact={() => deleteListContact(contact.id)}
+                        deleteContact={deleteListContact}
                     />
                 ))}
             </ul>
