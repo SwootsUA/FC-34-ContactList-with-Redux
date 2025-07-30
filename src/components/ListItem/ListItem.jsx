@@ -1,3 +1,4 @@
+import {memo} from 'react';
 import {useDispatch} from 'react-redux';
 import {setCurrentContact} from '../../store/actions/currentContactActions';
 import './ListItem.css';
@@ -24,4 +25,4 @@ function ListItem({selected, contact, deleteContact}) {
     );
 }
 
-export default ListItem;
+export default memo(ListItem);

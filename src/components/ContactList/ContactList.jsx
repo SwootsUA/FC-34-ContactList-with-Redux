@@ -1,4 +1,4 @@
-import {useEffect} from 'react';
+import {useCallback, useEffect} from 'react';
 import {useSelector, useDispatch} from 'react-redux';
 import ListItem from '../ListItem/ListItem';
 import {deleteContact, getContacts} from '../../store/actions/contactActions';
@@ -8,26 +8,29 @@ import './ContactList.css';
 function ContactList() {
     const dispatch = useDispatch();
     const contacts = useSelector(state => state.contacts);
-    const currentContact = useSelector(state => state.currentContact);
+    const currentContactId = useSelector(state => state.currentContact.id);
 
     useEffect(() => {
         api.get('/contacts').then(({data}) => dispatch(getContacts(data)));
     }, [dispatch]);
 
-    function deleteListContact(id) {
-        api.delete(`/contacts/${id}`)
-            .then(() => {
-                dispatch(deleteContact(id));
-            })
-            .catch(error => console.error(error));
-    }
+    const deleteListContact = useCallback(
+        id => {
+            api.delete(`/contacts/${id}`)
+                .then(() => {
+                    dispatch(deleteContact(id));
+                })
+                .catch(error => console.error(error));
+        },
+        [dispatch]
+    );
 
     return (
         <div className="scroll-box">
             <ul>
                 {contacts.map(contact => (
                     <ListItem
-                        selected={currentContact.id === contact.id}
+                        selected={currentContactId === contact.id}
                         contact={contact}
                         key={contact.id}
                         deleteContact={deleteListContact}

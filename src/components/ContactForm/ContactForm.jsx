@@ -146,12 +146,7 @@ function ContactForm() {
             </div>
             {currentContact.id && (
                 <div className="btn-container form-delete">
-                    <button
-                        type="button"
-                        onClick={() => {
-                            deleteCurrentContact();
-                        }}
-                    >
+                    <button type="button" onClick={deleteCurrentContact}>
                         Delete
                     </button>
                 </div>
