@@ -1,10 +1,4 @@
-import {createStore, combineReducers} from 'redux';
-import contactsReducer from './reducers/contactsReducer';
-import currentContactReducer from './reducers/currentContactReducer';
-
-const rootReducer = combineReducers({
-    contacts: contactsReducer,
-    currentContact: currentContactReducer,
-});
+import {createStore} from 'redux';
+import rootReducer from './reducers';
 
 export default createStore(rootReducer);
