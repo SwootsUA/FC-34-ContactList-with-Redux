@@ -3,8 +3,7 @@ const ACTION_TYPES = {
     ADD_CONTACT: 'addContact',
     DELETE_CONTACT: 'deleteContact',
     GET_CONTACTS: 'getContacts',
-    SET_CURRENT_CONTACT: 'setCurrentContact',
-    RESET_CURRENT_CONTACT: 'resetCurrentContact',
+    SET_CURRENT_CONTACT_ID: 'setCurrentContactId',
 };
 
 export default ACTION_TYPES;

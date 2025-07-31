@@ -8,7 +8,7 @@ import './ContactList.css';
 function ContactList() {
     const dispatch = useDispatch();
     const contacts = useSelector(state => state.contacts);
-    const currentContactId = useSelector(state => state.currentContact.id);
+    const currentContactId = useSelector(state => state.currentContactId);
 
     useEffect(() => {
         api.get('/contacts').then(({data}) => dispatch(getContacts(data)));

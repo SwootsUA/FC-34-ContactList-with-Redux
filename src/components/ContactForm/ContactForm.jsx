@@ -1,4 +1,4 @@
-import {useState, useEffect} from 'react';
+import {useState, useEffect, useMemo} from 'react';
 import {useSelector, useDispatch} from 'react-redux';
 import {nanoid} from 'nanoid';
 import api from '../../api/contacts-service';
@@ -7,12 +7,20 @@ import {
     deleteContact,
     editContact,
 } from '../../store/actions/contactActions';
-import {resetCurrentContact} from '../../store/actions/currentContactActions';
+import {EMPTY_CONTACT} from '../../constants/constants';
 import './ContactForm.css';
 
 function ContactForm() {
     const dispatch = useDispatch();
-    const currentContact = useSelector(state => state.currentContact);
+    const contacts = useSelector(state => state.contacts);
+    const currentContactId = useSelector(state => state.currentContactId);
+
+    const currentContact = useMemo(() => {
+        if (!currentContactId) return EMPTY_CONTACT;
+        return (
+            contacts.find(({id}) => id === currentContactId) || EMPTY_CONTACT
+        );
+    }, [currentContactId, contacts]);
 
     const [currentFormContact, setCurrentFormContact] = useState({
         ...currentContact,
@@ -56,9 +64,9 @@ function ContactForm() {
             api.post('/contacts', submitContact)
                 .then(({data}) => {
                     dispatch(addContact(data));
+                    setCurrentFormContact({...EMPTY_CONTACT});
                 })
                 .catch(error => console.error(error));
-            dispatch(resetCurrentContact());
         }
     }
 
@@ -144,7 +152,7 @@ function ContactForm() {
             <div className="btn-container form-submit">
                 <button type="submit">Save</button>
             </div>
-            {currentContact.id && (
+            {currentContactId && (
                 <div className="btn-container form-delete">
                     <button type="button" onClick={deleteCurrentContact}>
                         Delete

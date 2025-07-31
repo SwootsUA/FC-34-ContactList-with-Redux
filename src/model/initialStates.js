@@ -8,10 +8,4 @@ export const contactsState = [
     },
 ];
 
-export const currentContactState = {
-    id: '',
-    firstName: '',
-    lastName: '',
-    email: '',
-    phone: '',
-};
+export const currentContactState = null;

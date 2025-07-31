@@ -1,6 +1,6 @@
 import {memo} from 'react';
 import {useDispatch} from 'react-redux';
-import {setCurrentContact} from '../../store/actions/currentContactActions';
+import {setCurrentContactId} from '../../store/actions/currentContactActions';
 import './ListItem.css';
 
 function ListItem({selected, contact, deleteContact}) {
@@ -9,7 +9,7 @@ function ListItem({selected, contact, deleteContact}) {
     return (
         <li
             className={selected ? 'active' : ''}
-            onDoubleClick={() => dispatch(setCurrentContact(contact))}
+            onDoubleClick={() => dispatch(setCurrentContactId(contact.id))}
         >
             {`${contact.firstName} ${contact.lastName}`}
             <button

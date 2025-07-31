@@ -6,15 +6,11 @@ export default function currentContactReducer(
     {type, payload}
 ) {
     switch (type) {
-        case ACTION_TYPES.EDIT_CONTACT:
-        case ACTION_TYPES.SET_CURRENT_CONTACT:
-            return {...payload};
-        case ACTION_TYPES.ADD_CONTACT:
-        case ACTION_TYPES.RESET_CURRENT_CONTACT:
-            return {...currentContactState};
+        case ACTION_TYPES.SET_CURRENT_CONTACT_ID:
+            return payload;
         case ACTION_TYPES.DELETE_CONTACT:
-            if (payload === state.id) {
-                return {...currentContactState};
+            if (payload === state) {
+                return currentContactState;
             }
             return state;
         default:

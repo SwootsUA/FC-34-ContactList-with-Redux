@@ -1,7 +1,7 @@
 import {useDispatch} from 'react-redux';
 import ContactList from './components/ContactList/ContactList';
 import ContactForm from './components/ContactForm/ContactForm';
-import {resetCurrentContact} from './store/actions/currentContactActions';
+import {setCurrentContactId} from './store/actions/currentContactActions';
 import './App.css';
 
 function App() {
@@ -17,7 +17,7 @@ function App() {
             <ContactForm />
 
             <div className="btn-container">
-                <button onClick={() => dispatch(resetCurrentContact())}>
+                <button onClick={() => dispatch(setCurrentContactId(null))}>
                     New
                 </button>
             </div>
