@@ -22,12 +22,11 @@ function ContactForm() {
         );
     }, [currentContactId, contacts]);
 
-    const [currentFormContact, setCurrentFormContact] = useState({
-        ...currentContact,
-    });
+    const [currentFormContact, setCurrentFormContact] =
+        useState(currentContact);
 
     useEffect(() => {
-        setCurrentFormContact({...currentContact});
+        setCurrentFormContact(currentContact);
     }, [currentContact]);
 
     function onInputChange(e) {
@@ -50,9 +49,8 @@ function ContactForm() {
 
     function onFormSubmit(e) {
         e.preventDefault();
-        const submitContact = {...currentFormContact};
-        if (submitContact.id) {
-            api.put(`/contacts/${submitContact.id}`, submitContact)
+        if (currentFormContact.id) {
+            api.put(`/contacts/${currentFormContact.id}`, currentFormContact)
                 .then(({data}) => {
                     dispatch(editContact(data));
                 })
@@ -60,11 +58,10 @@ function ContactForm() {
                     console.error(error);
                 });
         } else {
-            submitContact.id = nanoid();
-            api.post('/contacts', submitContact)
+            api.post('/contacts', {...currentFormContact, id: nanoid()})
                 .then(({data}) => {
                     dispatch(addContact(data));
-                    setCurrentFormContact({...EMPTY_CONTACT});
+                    setCurrentFormContact(EMPTY_CONTACT);
                 })
                 .catch(error => console.error(error));
         }
