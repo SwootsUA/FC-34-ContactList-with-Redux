@@ -1,7 +1,7 @@
 import {useDispatch} from 'react-redux';
 import ContactList from './components/ContactList/ContactList';
 import ContactForm from './components/ContactForm/ContactForm';
-import {setCurrentContactId} from './store/actions/currentContactActions';
+import {setCurrentContactId} from './store/slices/currentContactSlice';
 import './App.css';
 
 function App() {

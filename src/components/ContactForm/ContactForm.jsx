@@ -1,19 +1,17 @@
 import {useState, useEffect, useMemo} from 'react';
 import {useSelector, useDispatch} from 'react-redux';
-import {nanoid} from 'nanoid';
-import api from '../../api/contacts-service';
+import {EMPTY_CONTACT} from '../../constants/constants';
+import './ContactForm.css';
 import {
     addContact,
     deleteContact,
     editContact,
-} from '../../store/actions/contactActions';
-import {EMPTY_CONTACT} from '../../constants/constants';
-import './ContactForm.css';
+} from '../../store/slices/contactsSlice';
 
 function ContactForm() {
     const dispatch = useDispatch();
-    const contacts = useSelector(state => state.contacts);
-    const currentContactId = useSelector(state => state.currentContactId);
+    const contacts = useSelector(state => state.contactsState.contacts);
+    const currentContactId = useSelector(state => state.currentContact);
 
     const currentContact = useMemo(() => {
         if (!currentContactId) return EMPTY_CONTACT;
@@ -50,29 +48,15 @@ function ContactForm() {
     function onFormSubmit(e) {
         e.preventDefault();
         if (currentFormContact.id) {
-            api.put(`/contacts/${currentFormContact.id}`, currentFormContact)
-                .then(({data}) => {
-                    dispatch(editContact(data));
-                })
-                .catch(error => {
-                    console.error(error);
-                });
+            dispatch(editContact(currentFormContact));
         } else {
-            api.post('/contacts', {...currentFormContact, id: nanoid()})
-                .then(({data}) => {
-                    dispatch(addContact(data));
-                    setCurrentFormContact(EMPTY_CONTACT);
-                })
-                .catch(error => console.error(error));
+            dispatch(addContact(currentFormContact));
+            setCurrentFormContact(EMPTY_CONTACT);
         }
     }
 
     function deleteCurrentContact() {
-        api.delete(`/contacts/${currentFormContact.id}`)
-            .then(() => {
-                dispatch(deleteContact(currentFormContact.id));
-            })
-            .catch(error => console.error(error));
+        dispatch(deleteContact(currentFormContact.id));
     }
 
     return (

@@ -1,6 +1,6 @@
 import {memo} from 'react';
 import {useDispatch} from 'react-redux';
-import {setCurrentContactId} from '../../store/actions/currentContactActions';
+import {setCurrentContactId} from '../../store/slices/currentContactSlice';
 import './ListItem.css';
 
 function ListItem({selected, contact, deleteContact}) {

@@ -1,9 +1,10 @@
-import {createStore, applyMiddleware} from 'redux';
-import {composeWithDevToolsDevelopmentOnly} from '@redux-devtools/extension';
-import logger from 'redux-logger';
-import rootReducer from './reducers';
+import {configureStore} from '@reduxjs/toolkit';
+import contactsReducer from './slices/contactsSlice';
+import currentContactReducer from './slices/currentContactSlice';
 
-export default createStore(
-    rootReducer,
-    composeWithDevToolsDevelopmentOnly(applyMiddleware(logger))
-);
+export default configureStore({
+    reducer: {
+        contactsState: contactsReducer,
+        currentContact: currentContactReducer,
+    },
+});
