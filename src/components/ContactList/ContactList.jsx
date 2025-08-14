@@ -1,12 +1,14 @@
 import {useCallback, useEffect} from 'react';
 import {useSelector, useDispatch} from 'react-redux';
+import {SyncLoader} from 'react-spinners';
+import {useSpinDelay} from 'spin-delay';
 import {deleteContact, getContacts} from '../../store/slices/contactsSlice';
 import ListItem from '../ListItem/ListItem';
 import './ContactList.css';
 
 function ContactList() {
     const dispatch = useDispatch();
-    const contacts = useSelector(state => state.contactsState.contacts);
+    const contactsState = useSelector(state => state.contactsState);
     const currentContactId = useSelector(state => state.currentContact);
 
     useEffect(() => {
@@ -20,18 +22,32 @@ function ContactList() {
         [dispatch]
     );
 
+    const showSpinner = useSpinDelay(contactsState.isPending, {
+        delay: 200,
+        minDuration: 200,
+    });
+
     return (
-        <div className="scroll-box">
-            <ul>
-                {contacts.map(contact => (
-                    <ListItem
-                        selected={currentContactId === contact.id}
-                        contact={contact}
-                        key={contact.id}
-                        deleteContact={deleteListContact}
-                    />
-                ))}
-            </ul>
+        <div className="list">
+            <SyncLoader
+                size={10}
+                color="#6e6e6e"
+                speedMultiplier={0.75}
+                loading={showSpinner}
+                className="spinner"
+            />
+            <div className="scroll-box">
+                <ul>
+                    {contactsState.contacts.map(contact => (
+                        <ListItem
+                            selected={currentContactId === contact.id}
+                            contact={contact}
+                            key={contact.id}
+                            deleteContact={deleteListContact}
+                        />
+                    ))}
+                </ul>
+            </div>
         </div>
     );
 }

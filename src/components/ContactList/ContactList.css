@@ -7,3 +7,12 @@ ul {
 .scroll-box {
     overflow-y: auto;
 }
+
+.list {
+    position: relative;
+}
+
+.spinner {
+    position: absolute;
+    top: -30px;
+}
