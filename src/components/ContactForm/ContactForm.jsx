@@ -1,13 +1,33 @@
-import {useState, useEffect, useMemo} from 'react';
+import {useMemo} from 'react';
 import {useSelector, useDispatch} from 'react-redux';
-import {Formik} from 'formik';
-import {EMPTY_CONTACT} from '../../constants/constants';
+import {Formik, Field, Form, ErrorMessage} from 'formik';
+import * as Yup from 'yup';
+import {EMPTY_CONTACT, PHONE_REGEX} from '../../constants/constants';
 import {
     addContact,
     deleteContact,
     editContact,
 } from '../../store/slices/contactsSlice';
 import './ContactForm.css';
+
+const contactSchema = Yup.object({
+    firstName: Yup.string().required(),
+    lastName: Yup.string().required(),
+    email: Yup.string().email().optional(),
+    phone: Yup.string().matches(PHONE_REGEX).optional(),
+});
+
+function ClearFieldButton({fieldName, setFieldValue}) {
+    return (
+        <button
+            type="button"
+            className="clear-info"
+            onClick={() => setFieldValue(fieldName, '')}
+        >
+            X
+        </button>
+    );
+}
 
 function ContactForm() {
     const dispatch = useDispatch();
@@ -21,127 +41,96 @@ function ContactForm() {
         );
     }, [currentContactId, contacts]);
 
-    const [currentFormContact, setCurrentFormContact] =
-        useState(currentContact);
-
-    useEffect(() => {
-        setCurrentFormContact(currentContact);
-    }, [currentContact]);
-
-    function onInputChange(e) {
-        setCurrentFormContact(prevFormContact => {
-            return {
-                ...prevFormContact,
-                [e.target.name]: e.target.value,
-            };
-        });
-    }
-
-    function clearContactField(e) {
-        setCurrentFormContact(prevFormContact => {
-            return {
-                ...prevFormContact,
-                [e.target.parentElement.querySelector('input').name]: '',
-            };
-        });
-    }
-
-    function onFormSubmit(e) {
-        e.preventDefault();
-        if (currentFormContact.id) {
-            dispatch(editContact(currentFormContact));
+    function onFormSubmit(values, {resetForm}) {
+        if (values.id) {
+            dispatch(editContact(values));
         } else {
-            dispatch(addContact(currentFormContact));
-            setCurrentFormContact(EMPTY_CONTACT);
+            dispatch(addContact(values));
+            resetForm({values: EMPTY_CONTACT});
         }
     }
 
     function deleteCurrentContact() {
-        dispatch(deleteContact(currentFormContact.id));
+        dispatch(deleteContact(currentContact.id));
     }
 
     return (
-        <form onSubmit={onFormSubmit} className="contact-info">
-            <div className="form-info">
-                <div className="input-wrapper">
-                    <input
-                        type="text"
-                        placeholder="First name"
-                        name="firstName"
-                        onChange={onInputChange}
-                        value={currentFormContact.firstName}
-                        required
-                    />
-                    <button
-                        type="button"
-                        className="clear-info"
-                        onClick={clearContactField}
-                    >
-                        X
-                    </button>
-                </div>
-                <div className="input-wrapper">
-                    <input
-                        type="text"
-                        placeholder="Last name"
-                        name="lastName"
-                        onChange={onInputChange}
-                        value={currentFormContact.lastName}
-                        required
-                    />
-                    <button
-                        type="button"
-                        className="clear-info"
-                        onClick={clearContactField}
-                    >
-                        X
-                    </button>
-                </div>
-                <div className="input-wrapper">
-                    <input
-                        type="email"
-                        placeholder="Email"
-                        name="email"
-                        onChange={onInputChange}
-                        value={currentFormContact.email}
-                    />
-                    <button
-                        type="button"
-                        className="clear-info"
-                        onClick={clearContactField}
-                    >
-                        X
-                    </button>
-                </div>
-                <div className="input-wrapper">
-                    <input
-                        type="tel"
-                        placeholder="Phone number"
-                        maxLength={20}
-                        name="phone"
-                        onChange={onInputChange}
-                        value={currentFormContact.phone}
-                    />
-                    <button
-                        type="button"
-                        className="clear-info"
-                        onClick={clearContactField}
-                    >
-                        X
-                    </button>
-                </div>
-            </div>
-            <div className="btn-container form-submit">
-                <button type="submit">Save</button>
-            </div>
-            {currentContactId && (
-                <div className="btn-container form-delete">
-                    <button type="button" onClick={deleteCurrentContact}>
-                        Delete
-                    </button>
-                </div>
+        <Formik
+            initialValues={currentContact}
+            onSubmit={onFormSubmit}
+            validationSchema={contactSchema}
+            enableReinitialize
+        >
+            {({isSubmiting, setFieldValue}) => (
+                <Form className="contact-info">
+                    <div className="form-info">
+                        <div className="input-wrapper">
+                            <Field
+                                type="text"
+                                name="firstName"
+                                placeholder="First name"
+                            />
+                            <ClearFieldButton
+                                fieldName={'firstName'}
+                                setFieldValue={setFieldValue}
+                            />
+                            <ErrorMessage name="firstName" />
+                        </div>
+                        <div className="input-wrapper">
+                            <Field
+                                type="text"
+                                name="lastName"
+                                placeholder="Last name"
+                            />
+                            <ClearFieldButton
+                                fieldName={'lastName'}
+                                setFieldValue={setFieldValue}
+                            />
+                            <ErrorMessage name="lastName" />
+                        </div>
+                        <div className="input-wrapper">
+                            <Field
+                                type="email"
+                                name="email"
+                                placeholder="Email"
+                            />
+                            <ClearFieldButton
+                                fieldName={'email'}
+                                setFieldValue={setFieldValue}
+                            />
+                            <ErrorMessage name="email" />
+                        </div>
+                        <div className="input-wrapper">
+                            <Field
+                                type="tel"
+                                name="phone"
+                                placeholder="Phone number"
+                            />
+                            <ClearFieldButton
+                                fieldName={'phone'}
+                                setFieldValue={setFieldValue}
+                            />
+                            <ErrorMessage name="phone" />
+                        </div>
+                    </div>
+                    <div className="btn-container form-submit">
+                        <button type="submit" disabled={isSubmiting}>
+                            Save
+                        </button>
+                    </div>
+                    {currentContactId && (
+                        <div className="btn-container form-delete">
+                            <button
+                                type="button"
+                                onClick={deleteCurrentContact}
+                            >
+                                Delete
+                            </button>
+                        </div>
+                    )}
+                </Form>
             )}
-        </form>
+        </Formik>
     );
 }
 

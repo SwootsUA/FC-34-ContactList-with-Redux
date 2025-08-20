@@ -7,4 +7,6 @@ export const EMPTY_CONTACT = {
     phone: '',
 };
 
-export const CONTACTS_SLICE_NAME = 'contacts'
+export const CONTACTS_SLICE_NAME = 'contacts';
+
+export const PHONE_REGEX = /^\+?[1-9][0-9]{7,14}$/;
