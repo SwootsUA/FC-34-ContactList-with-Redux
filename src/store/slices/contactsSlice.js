@@ -95,7 +95,6 @@ const contactsSlice = createSlice({
                 state.contacts.push(payload);
                 state.isPending = false;
                 state.error = null;
-                console.log(state.contacts);
             })
             .addCase(addContact.pending, setPending)
             .addCase(addContact.rejected, setError)
@@ -103,7 +102,6 @@ const contactsSlice = createSlice({
                 state.contacts = [...payload];
                 state.isPending = false;
                 state.error = null;
-                console.log(state.contacts);
             })
             .addCase(getContacts.pending, setPending)
             .addCase(getContacts.rejected, setError)
@@ -113,7 +111,6 @@ const contactsSlice = createSlice({
                 );
                 state.isPending = false;
                 state.error = null;
-                console.log(state.contacts);
             })
             .addCase(editContact.pending, setPending)
             .addCase(editContact.rejected, setError)
@@ -123,7 +120,6 @@ const contactsSlice = createSlice({
                 );
                 state.isPending = false;
                 state.error = null;
-                console.log(state.contacts);
             })
             .addCase(deleteContact.pending, setPending)
             .addCase(deleteContact.rejected, setError);
