@@ -11,10 +11,15 @@ import {
 import './ContactForm.css';
 
 const contactSchema = Yup.object({
-    firstName: Yup.string().required(),
-    lastName: Yup.string().required(),
-    email: Yup.string().email().optional(),
-    phone: Yup.string().matches(PHONE_REGEX).optional(),
+    firstName: Yup.string().required('First name is required'),
+    lastName: Yup.string().required('Last name is required'),
+    email: Yup.string().email('Please enter a valid email').optional(),
+    phone: Yup.string()
+        .matches(
+            PHONE_REGEX,
+            'Please enter a valid phone number with coutry code'
+        )
+        .optional(),
 });
 
 function ClearFieldButton({fieldName, setFieldValue}) {
@@ -61,7 +66,7 @@ function ContactForm() {
             validationSchema={contactSchema}
             enableReinitialize
         >
-            {({isSubmiting, setFieldValue}) => (
+            {({isSubmiting, setFieldValue, isValid, dirty}) => (
                 <Form className="contact-info">
                     <div className="form-info">
                         <div className="input-wrapper">
@@ -114,7 +119,10 @@ function ContactForm() {
                         </div>
                     </div>
                     <div className="btn-container form-submit">
-                        <button type="submit" disabled={isSubmiting}>
+                        <button
+                            type="submit"
+                            disabled={!isValid || isSubmiting || !dirty}
+                        >
                             Save
                         </button>
                     </div>
