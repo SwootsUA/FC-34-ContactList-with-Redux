@@ -4,15 +4,7 @@ ul {
     height: 100%;
 }
 
-.scroll-box {
-    overflow-y: auto;
-}
-
-.list {
-    position: relative;
-}
-
 .spinner {
     position: absolute;
-    top: -30px;
+    top: -20px;
 }

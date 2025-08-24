@@ -1,7 +1,10 @@
 import {useMemo} from 'react';
 import {useSelector, useDispatch} from 'react-redux';
-import {Formik, Field, Form, ErrorMessage} from 'formik';
+import {Formik, Field, Form} from 'formik';
 import * as Yup from 'yup';
+import {Button, TextField, IconButton, InputAdornment} from '@mui/material';
+import SaveSharpIcon from '@mui/icons-material/SaveSharp';
+import DisabledByDefaultRoundedIcon from '@mui/icons-material/DisabledByDefaultRounded';
 import {EMPTY_CONTACT, PHONE_REGEX} from '../../constants/constants';
 import {
     addContact,
@@ -22,21 +25,45 @@ const contactSchema = Yup.object({
         .optional(),
 });
 
-function ClearFieldButton({fieldName, setFieldValue}) {
-    return (
-        <button
-            type="button"
-            className="clear-info"
-            onClick={() => setFieldValue(fieldName, '')}
-        >
-            X
-        </button>
-    );
-}
+const FormikMuiTextField = ({
+    type,
+    name,
+    placeholder,
+    error,
+    setFieldValue,
+}) => (
+    <>
+        <Field
+            type={type}
+            name={name}
+            placeholder={placeholder}
+            as={TextField}
+            error={error}
+            helperText={error}
+            sx={{width: '90%'}}
+            InputProps={{
+                endAdornment: (
+                    <InputAdornment position="end">
+                        <IconButton
+                            type="button"
+                            onClick={() => setFieldValue(name, '')}
+                            edge="end"
+                            color="secondary"
+                            sx={{'&:focus': {outline: '0'}}}
+                        >
+                            <DisabledByDefaultRoundedIcon />
+                        </IconButton>
+                    </InputAdornment>
+                ),
+            }}
+        />
+    </>
+);
 
 function ContactForm() {
     const dispatch = useDispatch();
-    const contacts = useSelector(state => state.contactsState.contacts);
+    const contactsState = useSelector(state => state.contactsState);
+    const contacts = contactsState.contacts;
     const currentContactId = useSelector(state => state.currentContact);
 
     const currentContact = useMemo(() => {
@@ -66,74 +93,64 @@ function ContactForm() {
             validationSchema={contactSchema}
             enableReinitialize
         >
-            {({isSubmiting, setFieldValue, isValid, dirty}) => (
+            {({isSubmitting, setFieldValue, isValid, dirty, errors}) => (
                 <Form className="contact-info">
                     <div className="form-info">
-                        <div className="input-wrapper">
-                            <Field
-                                type="text"
-                                name="firstName"
-                                placeholder="First name"
-                            />
-                            <ClearFieldButton
-                                fieldName={'firstName'}
-                                setFieldValue={setFieldValue}
-                            />
-                            <ErrorMessage name="firstName" />
-                        </div>
-                        <div className="input-wrapper">
-                            <Field
-                                type="text"
-                                name="lastName"
-                                placeholder="Last name"
-                            />
-                            <ClearFieldButton
-                                fieldName={'lastName'}
-                                setFieldValue={setFieldValue}
-                            />
-                            <ErrorMessage name="lastName" />
-                        </div>
-                        <div className="input-wrapper">
-                            <Field
-                                type="email"
-                                name="email"
-                                placeholder="Email"
-                            />
-                            <ClearFieldButton
-                                fieldName={'email'}
-                                setFieldValue={setFieldValue}
-                            />
-                            <ErrorMessage name="email" />
-                        </div>
-                        <div className="input-wrapper">
-                            <Field
-                                type="tel"
-                                name="phone"
-                                placeholder="Phone number"
-                            />
-                            <ClearFieldButton
-                                fieldName={'phone'}
-                                setFieldValue={setFieldValue}
-                            />
-                            <ErrorMessage name="phone" />
-                        </div>
+                        <FormikMuiTextField
+                            type="text"
+                            name="firstName"
+                            placeholder="First name"
+                            error={errors.firstName}
+                            setFieldValue={setFieldValue}
+                        />
+
+                        <FormikMuiTextField
+                            type="text"
+                            name="lastName"
+                            placeholder="Last name"
+                            error={errors.lastName}
+                            setFieldValue={setFieldValue}
+                        />
+
+                        <FormikMuiTextField
+                            type="email"
+                            name="email"
+                            placeholder="Email"
+                            error={errors.email}
+                            setFieldValue={setFieldValue}
+                        />
+
+                        <FormikMuiTextField
+                            type="tel"
+                            name="phone"
+                            placeholder="Phone number"
+                            error={errors.phone}
+                            setFieldValue={setFieldValue}
+                        />
                     </div>
                     <div className="btn-container form-submit">
-                        <button
+                        <Button
+                            disabled={!isValid || isSubmitting || !dirty}
                             type="submit"
-                            disabled={!isValid || isSubmiting || !dirty}
+                            endIcon={<SaveSharpIcon />}
                         >
                             Save
-                        </button>
+                        </Button>
                     </div>
                     {currentContactId && (
                         <div className="btn-container form-delete">
-                            <button
-                                type="button"
+                            <Button
                                 onClick={deleteCurrentContact}
+                                type="button"
+                                color="error"
+                                sx={{
+                                    '&:hover': {
+                                        backgroundColor: 'error.dark',
+                                    },
+                                }}
                             >
                                 Delete
-                            </button>
+                            </Button>
                         </div>
                     )}
                 </Form>

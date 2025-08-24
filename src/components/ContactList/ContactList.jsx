@@ -2,6 +2,7 @@ import {useCallback, useEffect} from 'react';
 import {useSelector, useDispatch} from 'react-redux';
 import {SyncLoader} from 'react-spinners';
 import {useSpinDelay} from 'spin-delay';
+import {List} from '@mui/material';
 import {deleteContact, getContacts} from '../../store/slices/contactsSlice';
 import ListItem from '../ListItem/ListItem';
 import './ContactList.css';
@@ -28,7 +29,7 @@ function ContactList() {
     });
 
     return (
-        <div className="list">
+        <List className="list" disablePadding dense>
             <SyncLoader
                 size={10}
                 color="#6e6e6e"
@@ -36,19 +37,15 @@ function ContactList() {
                 loading={showSpinner}
                 className="spinner"
             />
-            <div className="scroll-box">
-                <ul>
-                    {contactsState.contacts.map(contact => (
-                        <ListItem
-                            selected={currentContactId === contact.id}
-                            contact={contact}
-                            key={contact.id}
-                            deleteContact={deleteListContact}
-                        />
-                    ))}
-                </ul>
-            </div>
-        </div>
+            {contactsState.contacts.map(contact => (
+                <ListItem
+                    selected={currentContactId === contact.id}
+                    contact={contact}
+                    key={contact.id}
+                    deleteContact={deleteListContact}
+                />
+            ))}
+        </List>
     );
 }
 

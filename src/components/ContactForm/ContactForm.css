@@ -11,22 +11,6 @@ input {
     grid-template-columns: 1fr 1fr;
 }
 
-.input-wrapper{
-    position: relative;
-    margin-bottom: 10px;
-}
-
-.clear-info {
-    position: absolute;
-    top: 50%;
-    translate: 0 -50%;
-    right: 7%;
-    width: 20px;
-    height: 20px;
-    border-radius: 5px;
-    padding: 0;
-}
-
 .form-info {
     grid-area: 1 / 1 / span 1 / span 2;
 }
